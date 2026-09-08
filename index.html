@@ -1822,11 +1822,34 @@
                 </button>
             </div>
             <div class="changelog-body">
+                <!-- v1.5 -->
+                <div class="changelog-version-block">
+                    <div class="changelog-version-tag">
+                        <span>v1.5</span>
+                        <span class="badge-latest">Latest</span>
+                    </div>
+                    <div class="changelog-list">
+                        <div class="changelog-item">
+                            <span class="changelog-bullet"></span>
+                            <div class="changelog-item-content">
+                                <span class="changelog-item-title">Smooth MP4 Export</span>
+                                <span class="changelog-item-desc">Fixed choppy video exports — recording now uses a fixed 30fps RAF loop with precise per-frame phase advancement.</span>
+                            </div>
+                        </div>
+                        <div class="changelog-item">
+                            <span class="changelog-bullet"></span>
+                            <div class="changelog-item-content">
+                                <span class="changelog-item-title">Full Preset Coverage</span>
+                                <span class="changelog-item-desc">Presets now save and restore all settings including animation toggle and speed.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- v1.4 -->
                 <div class="changelog-version-block">
                     <div class="changelog-version-tag">
                         <span>v1.4</span>
-                        <span class="badge-latest">Latest</span>
                     </div>
                     <div class="changelog-list">
                         <div class="changelog-item">
@@ -2119,6 +2142,7 @@
         let recordedChunks = [];
         let isRecordingVideo = false;
         let recordIntervalId = null;
+        let recordRafId = null;
         let wasAnimationPausedBeforeRecord = false;
         const btnLoadSamplePicture = document.getElementById('btnLoadSamplePicture');
         const fileInput = document.getElementById('fileInput');
@@ -2563,7 +2587,9 @@
                 ignoreAlpha: ignoreAlphaToggle.checked,
                 transparentHandling: transparentHandlingSelect.value,
                 alphaThreshold: parseInt(alphaThresholdSlider.value, 10),
-                sourceOpacity: parseInt(sourceOpacitySlider ? sourceOpacitySlider.value : 0, 10)
+                sourceOpacity: parseInt(sourceOpacitySlider ? sourceOpacitySlider.value : 0, 10),
+                animatePhase: animatePhaseToggle ? animatePhaseToggle.checked : false,
+                animSpeed: parseFloat(animSpeedSlider ? animSpeedSlider.value : 1.0)
             };
         }
 
@@ -2637,6 +2663,14 @@
             if (p.sourceOpacity !== undefined && sourceOpacitySlider) {
                 sourceOpacitySlider.value = p.sourceOpacity;
                 sourceOpacityVal.textContent = p.sourceOpacity + '%';
+            }
+            if (p.animatePhase !== undefined && animatePhaseToggle) {
+                animatePhaseToggle.checked = p.animatePhase;
+            }
+            if (p.animSpeed !== undefined && animSpeedSlider) {
+                animSpeedSlider.value = p.animSpeed;
+                const animSpeedVal = document.getElementById('animSpeedVal');
+                if (animSpeedVal) animSpeedVal.textContent = parseFloat(p.animSpeed).toFixed(1) + 'x';
             }
             markSourceLuminanceDirty();
             updatePaletteActive();
@@ -4000,12 +4034,16 @@
         }
 
         function stopVideoRecording() {
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
+            if (recordRafId) {
+                cancelAnimationFrame(recordRafId);
+                recordRafId = null;
             }
             if (recordIntervalId) {
                 clearInterval(recordIntervalId);
                 recordIntervalId = null;
+            }
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
             }
         }
 
@@ -4013,36 +4051,41 @@
             hideDragOverlay();
             if (!outputCanvas.width || !outputCanvas.height) return;
 
-            // If already recording: clicking button stops recording and exports captured part
             if (isRecordingVideo) {
                 stopVideoRecording();
                 return;
             }
 
+            const RECORD_FPS = 30;
+            const frameDuration = 1000 / RECORD_FPS; // ms per frame
             const durationSec = Math.max(1, Math.min(120, parseInt(videoDurationInput.value, 10) || 5));
+            const totalFrames = Math.round(durationSec * RECORD_FPS);
             const mimeType = getSupportedVideoMime();
             recordedChunks = [];
             wasAnimationPausedBeforeRecord = !animatePhaseToggle.checked;
 
-            // Ensure animation runs during recording
-            if (wasAnimationPausedBeforeRecord) {
-                setAnimationMode(true);
+            // Pause the normal animation loop so it doesn't interfere
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
 
-            // Capture live 60 FPS stream from outputCanvas
+            // Capture stream at target FPS
             let stream;
             try {
-                stream = outputCanvas.captureStream(60);
+                stream = outputCanvas.captureStream(RECORD_FPS);
             } catch (err) {
                 showToast('captureStream not supported in this browser');
                 console.error(err);
+                // Restart animation loop before bailing
+                startAnimationLoop();
                 return;
             }
 
             try {
                 mediaRecorder = new MediaRecorder(stream, {
                     mimeType: mimeType,
-                    videoBitsPerSecond: 16000000 // High bitrate (16 Mbps) for ultra crisp CRT scanlines & glow
+                    videoBitsPerSecond: 16000000
                 });
             } catch (err) {
                 mediaRecorder = new MediaRecorder(stream);
@@ -4055,18 +4098,17 @@
             };
 
             mediaRecorder.onstop = () => {
-                clearInterval(recordIntervalId);
-                recordIntervalId = null;
                 isRecordingVideo = false;
                 btnExportVideo.classList.remove('recording');
                 btnExportVideoText.textContent = 'Export Animation (MP4)';
                 recordingProgressContainer.style.display = 'none';
                 recordingProgressBar.style.width = '0%';
 
-                // Restore original animation state if it was paused before
+                // Restore animation loop
                 if (wasAnimationPausedBeforeRecord) {
-                    setAnimationMode(false);
+                    animatePhaseToggle.checked = false;
                 }
+                startAnimationLoop();
 
                 if (recordedChunks.length === 0) {
                     showToast('Recording failed (No data captured)');
@@ -4083,26 +4125,48 @@
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(videoUrl), 15000);
 
-                showToast(`MP4 Video exported: ${durationSec}s (${outputCanvas.width}x${outputCanvas.height})`);
+                showToast(`Video exported: ${durationSec}s @ ${RECORD_FPS}fps (${outputCanvas.width}x${outputCanvas.height})`);
             };
 
-            // Start recording in 250ms slice chunks
+            // Start MediaRecorder with 250ms data chunks
             mediaRecorder.start(250);
             isRecordingVideo = true;
             btnExportVideo.classList.add('recording');
             recordingProgressContainer.style.display = 'block';
 
-            const startTime = performance.now();
-            recordIntervalId = setInterval(() => {
-                const elapsed = (performance.now() - startTime) / 1000;
-                const pct = Math.min(100, (elapsed / durationSec) * 100);
-                recordingProgressBar.style.width = pct + '%';
-                btnExportVideoText.textContent = `Recording: ${elapsed.toFixed(1)}s / ${durationSec}s (Stop)`;
+            // Fixed-FPS RAF recording loop
+            const speed = parseFloat(animSpeedSlider.value);
+            const phasePerFrame = (1 / RECORD_FPS) * 4.8 * speed;
+            let frameCount = 0;
+            let lastRafTime = null;
 
-                if (elapsed >= durationSec) {
-                    stopVideoRecording();
+            function recordFrame(now) {
+                if (!isRecordingVideo) return;
+
+                if (lastRafTime === null) lastRafTime = now;
+                const elapsed = now - lastRafTime;
+
+                // Only render if at least one frame interval has passed
+                if (elapsed >= frameDuration) {
+                    lastRafTime = now - (elapsed % frameDuration); // drift correction
+                    animPhase += phasePerFrame;
+                    renderModulation();
+                    frameCount++;
+
+                    const pct = Math.min(100, (frameCount / totalFrames) * 100);
+                    recordingProgressBar.style.width = pct + '%';
+                    btnExportVideoText.textContent = `Recording: ${(frameCount / RECORD_FPS).toFixed(1)}s / ${durationSec}s (Stop)`;
+
+                    if (frameCount >= totalFrames) {
+                        stopVideoRecording();
+                        return;
+                    }
                 }
-            }, 80);
+
+                recordRafId = requestAnimationFrame(recordFrame);
+            }
+
+            recordRafId = requestAnimationFrame(recordFrame);
         };
         btnExportImage.onclick = () => {
             hideDragOverlay();
