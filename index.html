@@ -1252,6 +1252,7 @@
                                 <option value="" disabled>Choose a preset to load...</option>
                                 <optgroup label="Default Presets" id="defaultPresetsOptgroup">
                                     <option value="default_example_1" selected>Example 1</option>
+                                    <option value="default_example_2">Example 2</option>
                                     <option value="default_nixie_red">Nixie Red Diffusion</option>
                                     <option value="default_joy_division">Joy Division - Unknown Pleasures</option>
                                     <option value="default_p1_matrix">P1 Phosphor - Terminal Green</option>
@@ -1442,6 +1443,14 @@
                             <option value="dot_matrix">Monochrome CRT Dot Matrix</option>
                             <option value="scanlines">CRT Scanline Raster</option>
                         </select>
+
+                        <div class="toggle-row" style="margin-top: 4px;">
+                            <label for="crtSourceColorToggle" title="Illuminate phosphor dots with the original colors of the source image">Retain Source Image Colors</label>
+                            <label class="switch">
+                                <input type="checkbox" id="crtSourceColorToggle">
+                                <span class="slider-switch"></span>
+                            </label>
+                        </div>
 
                         <div class="control-label" style="margin-top: 6px;">
                             <span>Pixel Size</span>
@@ -1813,11 +1822,41 @@
                 </button>
             </div>
             <div class="changelog-body">
+                <!-- v1.4 -->
+                <div class="changelog-version-block">
+                    <div class="changelog-version-tag">
+                        <span>v1.4</span>
+                        <span class="badge-latest">Latest</span>
+                    </div>
+                    <div class="changelog-list">
+                        <div class="changelog-item">
+                            <span class="changelog-bullet"></span>
+                            <div class="changelog-item-content">
+                                <span class="changelog-item-title">Original Image Colors for CRT Dots</span>
+                                <span class="changelog-item-desc">Optional toggle to illuminate phosphor dots with underlying source image colors.</span>
+                            </div>
+                        </div>
+                        <div class="changelog-item">
+                            <span class="changelog-bullet"></span>
+                            <div class="changelog-item-content">
+                                <span class="changelog-item-title">Cellular Dot Matrix Engine</span>
+                                <span class="changelog-item-desc">Discrete un-sliced phosphor cells for dot matrix mode without line underlays.</span>
+                            </div>
+                        </div>
+                        <div class="changelog-item">
+                            <span class="changelog-bullet"></span>
+                            <div class="changelog-item-content">
+                                <span class="changelog-item-title">Example 2 Built-in Preset</span>
+                                <span class="changelog-item-desc">Added Example 2 dot matrix preset to default presets list.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- v1.3 -->
                 <div class="changelog-version-block">
                     <div class="changelog-version-tag">
                         <span>v1.3</span>
-                        <span class="badge-latest">Latest</span>
                     </div>
                     <div class="changelog-list">
                         <div class="changelog-item">
@@ -2034,6 +2073,7 @@
         const crtMaskToggle = document.getElementById('crtMaskToggle');
         const crtMaskControls = document.getElementById('crtMaskControls');
         const crtMaskTypeSelect = document.getElementById('crtMaskTypeSelect');
+        const crtSourceColorToggle = document.getElementById('crtSourceColorToggle');
         const crtPixelSizeSlider = document.getElementById('crtPixelSizeSlider');
         const crtPixelSizeVal = document.getElementById('crtPixelSizeVal');
         const resetCrtPixelSize = document.getElementById('resetCrtPixelSize');
@@ -2230,6 +2270,39 @@
                 glowIntensity: 75,
                 blendMode: 'lighter',
                 lineColor: '#ff3311',
+                bgColor: '#050608',
+                contrast: 65,
+                brightness: 0,
+                invert: false,
+                ignoreAlpha: true,
+                transparentHandling: 'cutout',
+                alphaThreshold: 10,
+                sourceOpacity: 0
+            },
+            default_example_2: {
+                name: 'Example 2',
+                mode: 'hybrid',
+                lines: 90,
+                amplitude: 22,
+                frequency: 18,
+                lineWidth: 1.8,
+                fillUnderlines: true,
+                dither: true,
+                ditherAmount: 25,
+                jitter: 26,
+                binarySnap: false,
+                binaryThreshold: 50,
+                pixelGridScale: 1,
+                crtMask: true,
+                crtMaskType: 'dot_matrix',
+                crtPixelSize: 4,
+                crtMaskIntensity: 75,
+                glow: true,
+                glowMode: 'confined',
+                glowRadius: 40,
+                glowIntensity: 75,
+                blendMode: 'lighter',
+                lineColor: '#f0f3f8',
                 bgColor: '#050608',
                 contrast: 65,
                 brightness: 0,
@@ -2476,6 +2549,7 @@
                 crtMaskType: crtMaskTypeSelect.value,
                 crtPixelSize: parseInt(crtPixelSizeSlider.value, 10),
                 crtMaskIntensity: parseInt(crtMaskIntensitySlider.value, 10),
+                crtSourceColor: crtSourceColorToggle ? crtSourceColorToggle.checked : false,
                 glow: glowToggle.checked,
                 glowMode: glowModeSelect ? glowModeSelect.value : 'confined',
                 glowRadius: parseInt(glowRadiusSlider.value, 10),
@@ -2531,6 +2605,9 @@
             if (p.crtMaskIntensity !== undefined) {
                 crtMaskIntensitySlider.value = p.crtMaskIntensity;
                 crtMaskIntensityVal.textContent = p.crtMaskIntensity + '%';
+            }
+            if (p.crtSourceColor !== undefined && crtSourceColorToggle) {
+                crtSourceColorToggle.checked = p.crtSourceColor;
             }
             if (p.glow !== undefined) {
                 glowToggle.checked = p.glow;
@@ -3204,20 +3281,21 @@
 
             // Step 4.5: CRT Pixel Mask & Cellular Phosphor Engine (Rendered BEFORE Glow)
             if (enableCrtMask && crtMaskIntensity > 0) {
-                if (crtMaskType === 'cellular_triad' || crtMaskType === 'cellular_mono') {
+                if (crtMaskType === 'cellular_triad' || crtMaskType === 'cellular_mono' || crtMaskType === 'dot_matrix') {
                     // -------------------------------------------------------------
                     // CELLULAR PHOSPHOR ENGINE (DISCRETE UN-SLICED ON/OFF DOTS)
                     // -------------------------------------------------------------
                     // Each round phosphor dot is a discrete hardware physical cell:
-                    // It is 100% solid ON or 100% OFF. Never cut in half, never 2 colors.
+                    // It is 100% solid ON or 100% OFF. Never cut in half, never 2 colors,
+                    // and ZERO solid vector lines underneath.
                     const imgData = outCtx.getImageData(0, 0, w, h);
                     const d = imgData.data;
 
                     const bgRGB = hexToRgb(bgColor);
-                    const bgLum = bgRGB[0] * 0.299 + bgRGB[1] * 0.587 + bgRGB[2] * 0.114;
                     const strokeRGB = hexToRgb(lineColor);
+                    const useSourceColors = (crtSourceColorToggle && crtSourceColorToggle.checked);
 
-                    // Clear canvas to background
+                    // Clear canvas to background - wipes out all continuous vector lines
                     outCtx.save();
                     outCtx.globalCompositeOperation = 'source-over';
                     outCtx.globalAlpha = 1.0;
@@ -3235,16 +3313,15 @@
                     }
 
                     const s = Math.max(3, crtPixelSize);
-                    const rad = Math.max(1, (s * 0.84) / 2);
-                    const cellW = s * 3;
-                    const cellH = s * 2;
+                    const rad = Math.max(1, (s * 0.78) / 2);
 
                     const redDots = [];
                     const greenDots = [];
                     const blueDots = [];
                     const monoDots = [];
+                    const coloredDots = []; // [x, y, color]
 
-                    const sampleR = Math.max(1, Math.round(rad));
+                    const sampleR = Math.max(1, Math.round(s * 0.5));
                     const sampleR2 = sampleR * sampleR;
 
                     function checkDotHit(cx, cy) {
@@ -3270,50 +3347,77 @@
 
                                 const idx = (py * w + px) * 4;
                                 const diff = Math.abs(d[idx] - bgRGB[0]) + Math.abs(d[idx + 1] - bgRGB[1]) + Math.abs(d[idx + 2] - bgRGB[2]);
-                                if (diff > 25) return true;
+                                if (diff > 65) return true;
                             }
                         }
                         return false;
                     }
 
-                    const isMono = (crtMaskType === 'cellular_mono');
+                    function addDot(cx, cy, defaultChannel) {
+                        if (!checkDotHit(cx, cy)) return;
 
-                    for (let y = 0; y < h + cellH; y += cellH) {
-                        for (let x = 0; x < w + cellW; x += cellW) {
-                            // Row 1
-                            const r1x = x + s * 0.5, r1y = y + s * 0.5;
-                            const g1x = x + s * 1.5, g1y = y + s * 0.5;
-                            const b1x = x + s * 2.5, b1y = y + s * 0.5;
-
-                            if (isMono) {
-                                if (checkDotHit(g1x, g1y)) monoDots.push(g1x, g1y);
-                            } else {
-                                if (checkDotHit(r1x, r1y)) redDots.push(r1x, r1y);
-                                if (checkDotHit(g1x, g1y)) greenDots.push(g1x, g1y);
-                                if (checkDotHit(b1x, b1y)) blueDots.push(b1x, b1y);
+                        if (useSourceColors) {
+                            const sIdx = Math.min(cachedLum.length - 1, Math.max(0, ((cy | 0) * w + (cx | 0))));
+                            const r = cachedR[sIdx];
+                            const g = cachedG[sIdx];
+                            const b = cachedB[sIdx];
+                            const maxC = Math.max(r, g, b);
+                            let col = lineColor;
+                            if (maxC > 20) {
+                                col = `rgb(${r}, ${g}, ${b})`;
                             }
+                            coloredDots.push(cx, cy, col);
+                        } else if (crtMaskType === 'cellular_triad') {
+                            if (defaultChannel === 'r') redDots.push(cx, cy);
+                            else if (defaultChannel === 'g') greenDots.push(cx, cy);
+                            else if (defaultChannel === 'b') blueDots.push(cx, cy);
+                        } else {
+                            monoDots.push(cx, cy);
+                        }
+                    }
 
-                            // Row 2 (staggered)
-                            const r2x = x + s * 2.0, r2y = y + s * 1.5;
-                            const g2x = x + 0.0,     g2y = y + s * 1.5;
-                            const b2x = x + s * 1.0, b2y = y + s * 1.5;
+                    if (crtMaskType === 'dot_matrix') {
+                        // Orthogonal rectangular dot matrix grid
+                        const halfS = s * 0.5;
+                        for (let y = 0; y < h; y += s) {
+                            const cy = y + halfS;
+                            for (let x = 0; x < w; x += s) {
+                                const cx = x + halfS;
+                                addDot(cx, cy, 'mono');
+                            }
+                        }
+                    } else {
+                        // Staggered honeycomb phosphor triad grid
+                        const cellW = s * 3;
+                        const cellH = s * 2;
 
-                            if (isMono) {
-                                if (checkDotHit(r2x, r2y)) monoDots.push(r2x, r2y);
-                            } else {
-                                if (checkDotHit(r2x, r2y)) redDots.push(r2x, r2y);
-                                if (checkDotHit(g2x, g2y)) greenDots.push(g2x, g2y);
-                                if (checkDotHit(b2x, b2y)) blueDots.push(b2x, b2y);
+                        for (let y = 0; y < h + cellH; y += cellH) {
+                            for (let x = 0; x < w + cellW; x += cellW) {
+                                // Row 1
+                                addDot(x + s * 0.5, y + s * 0.5, 'r');
+                                addDot(x + s * 1.5, y + s * 0.5, 'g');
+                                addDot(x + s * 2.5, y + s * 0.5, 'b');
+
+                                // Row 2 (staggered)
+                                addDot(x + s * 2.0, y + s * 1.5, 'r');
+                                addDot(x + 0.0,     y + s * 1.5, 'g');
+                                addDot(x + s * 1.0, y + s * 1.5, 'b');
                             }
                         }
                     }
 
-                    // Ghost pixels eliminated: unlit background tube dots are completely disabled
-
                     outCtx.save();
                     outCtx.globalAlpha = Math.min(1.0, crtMaskIntensity * 1.15);
 
-                    if (isMono) {
+                    if (useSourceColors) {
+                        // Draw phosphor dots with their respective source image RGB colors
+                        for (let i = 0; i < coloredDots.length; i += 3) {
+                            outCtx.fillStyle = coloredDots[i + 2];
+                            outCtx.beginPath();
+                            outCtx.arc(coloredDots[i], coloredDots[i + 1], rad, 0, Math.PI * 2);
+                            outCtx.fill();
+                        }
+                    } else if (crtMaskType === 'cellular_mono' || crtMaskType === 'dot_matrix') {
                         // Draw solid illuminated monochrome phosphor dots
                         outCtx.fillStyle = lineColor;
                         outCtx.beginPath();
@@ -3379,7 +3483,9 @@
                 if (glowMode === 'confined') {
                     // Confined Core mode: tight neon core bloom on active phosphor dots
                     // without washing out or bleeding red into the pitch-black background
-                    const rad1 = Math.max(1, Math.min(5, glowRadius * 0.3));
+                    const isDiscreteDots = (enableCrtMask && crtMaskIntensity > 0 && (crtMaskType === 'cellular_triad' || crtMaskType === 'cellular_mono' || crtMaskType === 'dot_matrix'));
+                    const maxBlur = isDiscreteDots ? Math.max(1, Math.min(2.0, crtPixelSize * 0.4)) : 5;
+                    const rad1 = Math.max(1, Math.min(maxBlur, glowRadius * 0.3));
                     outCtx.filter = `blur(${rad1}px)`;
                     outCtx.globalAlpha = Math.min(1.0, glowIntensity * 1.15);
                     outCtx.drawImage(glowCanvas, 0, 0);
@@ -3800,6 +3906,7 @@
         };
 
         crtMaskTypeSelect.onchange = renderModulation;
+        if (crtSourceColorToggle) crtSourceColorToggle.onchange = renderModulation;
 
         bindSlider(crtPixelSizeSlider, crtPixelSizeVal, ' px');
         bindSlider(crtMaskIntensitySlider, crtMaskIntensityVal, '%');
