@@ -1796,57 +1796,50 @@
                 <!-- v1.2 -->
                 <div class="changelog-version-block">
                     <div class="changelog-version-tag">
-                        <span>v1.2 — 1-Bit Hard Pixels, Presets & Alpha Handling</span>
+                        <span>v1.2</span>
                         <span class="badge-latest">Latest</span>
                     </div>
                     <div class="changelog-list">
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">1-Bit Binary Snap (No Anti-Aliasing)</span>
-                                <span class="changelog-item-desc">Eliminate every fractional, anti-aliased, or semi-transparent edge pixel. Every pixel is strictly 100% ON or 100% OFF with an adjustable threshold.</span>
+                                <span class="changelog-item-title">1-Bit Binary Snap</span>
+                                <span class="changelog-item-desc">Converts output to pure 1-bit pixels (100% on or off) with an adjustable threshold, removing anti-aliasing and transparent edges.</span>
                             </div>
                         </div>
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">Crisp Pixel Grid Scale (1x - 6x)</span>
-                                <span class="changelog-item-desc">Hardware nearest-neighbor pixel blocks for genuine 1-bit Macintosh, Game Boy, and bitmap arcade graphics with razor-sharp edges.</span>
+                                <span class="changelog-item-title">Pixel Grid Scale (1x - 6x)</span>
+                                <span class="changelog-item-desc">Renders lines onto a downscaled pixel grid for a sharp retro pixel-art look.</span>
                             </div>
                         </div>
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">Cellular Phosphor Engine (Physical CRT Dots)</span>
-                                <span class="changelog-item-desc">Authentic CRT shadow mask physics: every phosphor dot is an indivisible physical cell. Dots are strictly 100% ON or 100% OFF in solid phosphor color, never sliced in half.</span>
+                                <span class="changelog-item-title">Cellular CRT Phosphor Dots</span>
+                                <span class="changelog-item-desc">Renders discrete, full round phosphor dots (RGB or monochrome) that stay 100% on or off instead of being sliced by lines.</span>
                             </div>
                         </div>
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">Hard Phosphor Triad (Crisp Subpixel Grid)</span>
-                                <span class="changelog-item-desc">Square, razor-sharp RGB phosphor cell raster with zero vector edge-blur or anti-aliasing.</span>
+                                <span class="changelog-item-title">Preset System</span>
+                                <span class="changelog-item-desc">Added built-in presets and the ability to save or delete custom presets locally in your browser.</span>
                             </div>
                         </div>
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">Presets & Custom Configs Manager</span>
-                                <span class="changelog-item-desc">Save, load, and manage your custom slider and style configurations with browser LocalStorage persistence and one-click recall.</span>
+                                <span class="changelog-item-title">Transparent Pixel Handling</span>
+                                <span class="changelog-item-desc">Added an option to ignore transparency in PNGs with Flatten (straight lines) and Cutout (broken lines) modes.</span>
                             </div>
                         </div>
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">Ignore Transparent Pixels</span>
-                                <span class="changelog-item-desc">Zero-allocation alpha detection with Flatten (continuous baseline) and Cutout (subject-isolated strokes) modes for PNGs and transparent media.</span>
-                            </div>
-                        </div>
-                        <div class="changelog-item">
-                            <span class="changelog-bullet"></span>
-                            <div class="changelog-item-content">
-                                <span class="changelog-item-title">Phosphor Dot Triad ON by Default</span>
-                                <span class="changelog-item-desc">CRT Shadow Mask with authentic staggered RGB phosphor dots active on initial startup.</span>
+                                <span class="changelog-item-title">Phosphor Dot Triad Default</span>
+                                <span class="changelog-item-desc">Enabled CRT phosphor triad mask by default on first load.</span>
                             </div>
                         </div>
                     </div>
@@ -1857,28 +1850,28 @@
                 <!-- v1.1 -->
                 <div class="changelog-version-block">
                     <div class="changelog-version-tag">
-                        <span>v1.1 — Hardware Acceleration & MP4 Video Export</span>
+                        <span>v1.1</span>
                     </div>
                     <div class="changelog-list">
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">High-Bitrate MP4 Video Export (60 FPS)</span>
-                                <span class="changelog-item-desc">Native MediaRecorder H.264 / MP4 recording with user-configurable duration in seconds and live countdown progress.</span>
+                                <span class="changelog-item-title">MP4 Video Export</span>
+                                <span class="changelog-item-desc">Export animated waveforms directly as MP4 video with custom duration in seconds.</span>
                             </div>
                         </div>
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">500+ FPS Hardware Acceleration</span>
-                                <span class="changelog-item-desc">Zero CPU readbacks during animation using pre-computed TypedArray luminance caches and GPU compositing.</span>
+                                <span class="changelog-item-title">Luminance Caching</span>
+                                <span class="changelog-item-desc">Pre-computes grayscale values for smoother animation and faster redraws.</span>
                             </div>
                         </div>
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">Before / After Realtime Comparison</span>
-                                <span class="changelog-item-desc">Instant toggle and Key B keyboard shortcut to compare raw source media against modulation lines.</span>
+                                <span class="changelog-item-title">Before / After View</span>
+                                <span class="changelog-item-desc">Toggle or press Key B to quickly compare the original image against the modulated output.</span>
                             </div>
                         </div>
                     </div>
@@ -1889,14 +1882,14 @@
                 <!-- v1.0 -->
                 <div class="changelog-version-block">
                     <div class="changelog-version-tag">
-                        <span>v1.0 — Initial Release</span>
+                        <span>v1.0</span>
                     </div>
                     <div class="changelog-list">
                         <div class="changelog-item">
                             <span class="changelog-bullet"></span>
                             <div class="changelog-item-content">
-                                <span class="changelog-item-title">Analog Waveform Synthesizer</span>
-                                <span class="changelog-item-desc">Rutt-Etra 3D elevation, frequency modulation (FM), hybrid scanlines, and halftone stroke rendering.</span>
+                                <span class="changelog-item-title">Initial Release</span>
+                                <span class="changelog-item-desc">Analog waveform modes (Elevation, FM, Hybrid, Halftone), CRT masks, dithering, and PNG image export.</span>
                             </div>
                         </div>
                     </div>
