@@ -1,0 +1,423 @@
+/* ============================================================
+   SKB // TOOLS — shared design tokens (VIBE_UI_REFERENCE.md)
+   bg #000000 / 1px #ffffff|#333333 borders / Consolas, Courier New
+   accent: pastel orange #ffb366 / warn #ffcc00 / alarm #ff3333
+   ============================================================ */
+
+:root {
+    --tok-bg: #000000;
+    --tok-bg-soft: #0a0a0a;
+    --tok-bg-hover: #222222;
+    --tok-border: #ffffff;
+    --tok-border-dim: #333333;
+    --tok-text: #ffffff;
+    --tok-text-muted: #888888;
+    --tok-accent: #ffb366;
+    --tok-accent-dim: #e6994d;
+    --tok-warn: #ffcc00;
+    --tok-alarm: #ff3333;
+    --tok-font: Consolas, 'Courier New', monospace;
+}
+
+/* ---------- ASCII-art range sliders (----------o----) ---------- */
+
+input[type="range"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background: transparent !important;
+    cursor: pointer;
+    height: 16px;
+    margin: 0;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 1px;
+    border: none;
+    background: repeating-linear-gradient(to right,
+        #555555 0, #555555 4px,
+        transparent 4px, transparent 7px);
+}
+
+input[type="range"]::-moz-range-track {
+    height: 1px;
+    border: none;
+    background: repeating-linear-gradient(to right,
+        #555555 0, #555555 4px,
+        transparent 4px, transparent 7px);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 9px;
+    height: 9px;
+    margin-top: -4.5px;
+    border: 1px solid var(--tok-accent);
+    border-radius: 50%;
+    background: #000000;
+    box-shadow: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--tok-accent);
+    border-radius: 50%;
+    background: #000000;
+    box-shadow: none;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb,
+input[type="range"]:focus::-webkit-slider-thumb,
+input[type="range"]:active::-webkit-slider-thumb {
+    background: var(--tok-accent);
+    border-color: var(--tok-accent);
+}
+
+input[type="range"]:hover::-moz-range-thumb,
+input[type="range"]:focus::-moz-range-thumb,
+input[type="range"]:active::-moz-range-thumb {
+    background: var(--tok-accent);
+    border-color: var(--tok-accent);
+}
+
+input[type="range"]:focus {
+    outline: 1px dashed var(--tok-accent);
+    outline-offset: 3px;
+}
+
+/* Higher-specificity repeats so class-scoped slider rules (e.g. .player-seekbar) stay ASCII-styled too. */
+
+input[type="range"].player-seekbar::-webkit-slider-runnable-track {
+    height: 1px;
+    border: none;
+    background: repeating-linear-gradient(to right,
+        #555555 0, #555555 4px,
+        transparent 4px, transparent 7px);
+}
+
+input[type="range"].player-seekbar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 9px;
+    height: 9px;
+    margin-top: -4.5px;
+    border: 1px solid var(--tok-accent);
+    border-radius: 50%;
+    background: #000000;
+    box-shadow: none;
+    transform: none;
+}
+
+input[type="range"].player-seekbar::-moz-range-thumb {
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--tok-accent);
+    border-radius: 50%;
+    background: #000000;
+    box-shadow: none;
+}
+
+/* ---------- sharp corners: terminal look ---------- */
+
+* ,
+*::before,
+*::after {
+    border-radius: 0 !important;
+}
+
+/* Exception: the 'o' slider thumbs stay round (----------o----) */
+
+input[type="range"]::-webkit-slider-thumb,
+input[type="range"].player-seekbar::-webkit-slider-thumb,
+input[type="range"]::-moz-range-thumb,
+input[type="range"].player-seekbar::-moz-range-thumb {
+    border-radius: 50% !important;
+}
+
+/* ---------- terminal pass: flat surfaces, no glow / glass ---------- */
+
+:root {
+    --panel-glass: #000000;
+    --card-glass: #050505;
+    --control-bg: #0a0a0a;
+    --text-main: #ffffff;
+    --bg-surface: #050505;
+}
+
+*,
+*::before,
+*::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    font-weight: 400 !important;
+}
+
+h1, .app-title {
+    font-weight: 700 !important;
+    letter-spacing: 3px !important;
+}
+
+body { background-image: none !important; }
+
+button,
+select,
+input,
+textarea {
+    font-family: var(--tok-font) !important;
+}
+
+.logo-icon { background: #000000 !important; border: 1px solid var(--tok-accent); }
+.logo-icon svg { stroke: var(--tok-accent) !important; }
+.logo-icon svg circle { fill: var(--tok-accent) !important; }
+
+button:hover:not([disabled]) { background-color: var(--tok-bg-hover); }
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible {
+    outline: 1px solid var(--tok-accent) !important;
+    outline-offset: 0 !important;
+}
+
+::-webkit-scrollbar { width: 6px !important; height: 6px !important; }
+::-webkit-scrollbar-track { background: #000000 !important; }
+::-webkit-scrollbar-thumb { background: #333333 !important; }
+::-webkit-scrollbar-thumb:hover { background: var(--tok-accent) !important; }
+
+/* ---------- tool switcher (injected by switcher.js) ---------- */
+
+.swx-switcher {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 2147483000;
+    font-family: var(--tok-font);
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--tok-text);
+    user-select: none;
+}
+
+.swx-switcher-toggle {
+    display: inline-block;
+    background: var(--tok-bg);
+    border: 1px solid var(--tok-border);
+    color: var(--tok-text);
+    padding: 4px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.swx-switcher-toggle:hover { background: var(--tok-bg-hover); }
+
+.swx-switcher.swx-inline {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 1000;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+.swx-inline .swx-switcher-toggle { padding: 2px 8px; border-color: var(--tok-border-dim); color: var(--tok-text-muted); }
+.swx-inline .swx-switcher-toggle:hover { color: var(--tok-text); border-color: var(--tok-border); }
+
+.swx-switcher-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 100%;
+    background: var(--tok-bg);
+    border: 1px solid var(--tok-border);
+    border-top: none;
+}
+.swx-switcher.open .swx-switcher-menu { display: block; }
+
+.swx-switcher-item {
+    display: block;
+    width: 100%;
+    padding: 5px 10px;
+    background: var(--tok-bg);
+    border: none;
+    color: var(--tok-text);
+    font-family: var(--tok-font);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.swx-switcher-item:hover { background: var(--tok-bg-hover); }
+.swx-switcher-item[disabled] { color: var(--tok-accent); cursor: default; }
+.swx-switcher-item[disabled]:hover { background: var(--tok-bg); }
+
+.swx-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2147483001;
+    background: rgba(0, 0, 0, 0.85);
+    font-family: var(--tok-font);
+    color: var(--tok-text);
+}
+.swx-backdrop.open { display: flex; }
+.swx-backdrop.open {
+    align-items: center;
+    justify-content: center;
+}
+
+.swx-modal {
+    background: var(--tok-bg);
+    border: 1px solid var(--tok-warn);
+    padding: 24px 28px;
+    text-align: center;
+    max-width: 420px;
+}
+
+.swx-modal-title {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--tok-warn);
+    margin-bottom: 20px;
+}
+
+.swx-modal-row { display: flex; gap: 12px; justify-content: center; }
+
+.swx-modal-btn {
+    background: var(--tok-bg);
+    border: 1px solid var(--tok-border);
+    color: var(--tok-text);
+    font-family: var(--tok-font);
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    cursor: pointer;
+}
+.swx-modal-btn:hover { background: var(--tok-bg-hover); }
+.swx-modal-btn.swx-danger { border-color: var(--tok-alarm); color: var(--tok-alarm); }
+.swx-modal-btn.swx-danger:hover { background: #220000; }
+
+/* ---------- hub ---------- */
+
+body.hub-body { margin: 0; }
+
+html.hub-body {
+    background: var(--tok-bg);
+    color: var(--tok-text);
+    font-family: var(--tok-font);
+}
+
+.hub-header {
+    border-bottom: 1px solid var(--tok-border);
+    padding: 28px 32px 20px;
+    text-align: center;
+}
+.hub-header h1 {
+    margin: 0;
+    font-size: 18px;
+    letter-spacing: 4px;
+    font-weight: normal;
+}
+.hub-header .hub-sub {
+    margin-top: 6px;
+    color: var(--tok-text-muted);
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.hub-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding: 36px 32px;
+    justify-content: center;
+    align-content: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.hub-entry {
+    width: 360px;
+    max-width: 100%;
+    border: 1px solid var(--tok-border-dim);
+    background: var(--tok-bg);
+}
+.hub-entry:hover { border-color: var(--tok-border); }
+
+.hub-entry-preview {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 200px;
+    border-bottom: 1px solid var(--tok-border-dim);
+    background: var(--tok-bg-soft);
+    overflow: hidden;
+}
+
+.hub-preview-placeholder {
+    color: var(--tok-border-dim);
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+/* Hidden until the file actually loads; a missing file removes itself (onerror) so no broken icon shows. */
+.hub-preview-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+}
+.hub-preview-img.loaded { opacity: 1; }
+
+.hub-entry-body { padding: 14px 16px; }
+
+.hub-entry-title {
+    margin: 0 0 6px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    font-weight: normal;
+    color: var(--tok-text);
+}
+
+.hub-entry-desc {
+    margin: 0 0 14px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--tok-text-muted);
+}
+
+.hub-open-btn {
+    display: inline-block;
+    background: var(--tok-bg);
+    border: 1px solid var(--tok-accent);
+    color: var(--tok-accent);
+    font-family: var(--tok-font);
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 6px 18px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.hub-open-btn:hover { background: var(--tok-bg-hover); }
+
+/* ---------- collapsible categories (collapse.js) ---------- */
+
+.swx-foldable { cursor: pointer; user-select: none; }
+.swx-foldable:hover { color: var(--tok-text) !important; }
+.swx-fold-mark {
+    display: inline-block;
+    min-width: 3ch;
+    color: var(--tok-accent);
+    font-family: var(--tok-font);
+}
+.glass-card.swx-collapsed > :not(.card-header) { display: none !important; }
+.glass-card.swx-collapsed > .card-header { margin-bottom: 0 !important; }
