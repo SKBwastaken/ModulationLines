@@ -421,3 +421,53 @@ html.hub-body {
 }
 .glass-card.swx-collapsed > :not(.card-header) { display: none !important; }
 .glass-card.swx-collapsed > .card-header { margin-bottom: 0 !important; }
+
+/* ---------- unified floating surfaces (changelog, toast, overlays) ---------- */
+
+html[data-tool] .changelog-modal-overlay {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+html[data-tool] .changelog-modal-card {
+    background: var(--tok-bg) !important;
+    border: 1px solid var(--tok-border-dim) !important;
+}
+
+html[data-tool] .changelog-header,
+html[data-tool] .changelog-footer {
+    background: var(--tok-bg-soft) !important;
+    border-color: var(--tok-border-dim) !important;
+}
+
+html[data-tool] .changelog-item {
+    background: rgba(255, 255, 255, 0.024) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    color: #c8c8c8 !important;
+}
+
+html[data-tool] .changelog-divider {
+    background: var(--tok-border-dim) !important;
+}
+
+/* dark text: white on pastel orange is unreadable */
+html[data-tool] .changelog-btn-confirm,
+html[data-tool] .changelog-version-tag .badge-latest {
+    color: #000000 !important;
+}
+
+html[data-tool] .toast,
+html[data-tool] .media-player-bar,
+html[data-tool] .comparison-badge,
+html[data-tool] .zoom-display,
+html[data-tool] .btn-circle {
+    background: rgba(10, 10, 10, 0.95) !important;
+}
+
+html[data-tool] .window-drag-overlay {
+    background: rgba(0, 0, 0, 0.88) !important;
+}
+html[data-tool] .changelog-build-badge {
+    color: var(--tok-accent) !important;
+    border: 1px solid var(--tok-accent) !important;
+    background: rgba(255, 179, 102, 0.08) !important;
+}

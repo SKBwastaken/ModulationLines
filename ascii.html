@@ -1057,7 +1057,7 @@
         }
 
         .changelog-modal-card {
-            background: rgba(15, 16, 22, 0.96);
+            background: #000000;
             border: 1px solid rgba(255, 179, 102, 0.35);
             border-radius: 16px;
             width: 92%;
@@ -1335,20 +1335,20 @@
         }
 
         .btn-danger-red {
-            background: #dc2626 !important;
+            background: var(--tok-alarm) !important;
             color: #ffffff !important;
-            border: 1px solid #ef4444 !important;
+            border: 1px solid var(--tok-alarm) !important;
             font-weight: 600 !important;
-            box-shadow: 0 0 14px rgba(239, 68, 68, 0.35) !important;
+            box-shadow: none !important;
             cursor: pointer;
             border-radius: 8px;
             transition: all 0.15s ease;
         }
 
         .btn-danger-red:hover {
-            background: #b91c1c !important;
-            border-color: #f87171 !important;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.55) !important;
+            background: #cc2929 !important;
+            border-color: var(--tok-alarm) !important;
+            box-shadow: none !important;
             transform: translateY(-1px);
         }
 
@@ -1533,7 +1533,7 @@
                 <!-- Preset Delete Confirmation Overlay (Contained ONLY to Presets category card) -->
                 <div class="preset-delete-overlay" id="presetDeleteOverlay" style="display: none;">
                     <div class="preset-delete-box">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 7px; color: #f87171; font-weight: 700; font-size: 0.82rem;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 7px; color: #ff3333; font-weight: 700; font-size: 0.82rem;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -1576,7 +1576,7 @@
                                 <!-- Dynamic from localStorage -->
                             </optgroup>
                         </select>
-                        <button type="button" class="btn-tool" id="btnDeletePreset" title="Delete selected user preset" style="display: none; padding: 0 8px; color: #f87171; border-color: rgba(248, 113, 113, 0.3);">
+                        <button type="button" class="btn-tool" id="btnDeletePreset" title="Delete selected user preset" style="display: none; padding: 0 8px; color: #ff3333; border-color: rgba(255, 51, 51, 0.3);">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         </button>
                     </div>
@@ -3570,7 +3570,7 @@
                 if (available) {
                     if (customFontFeedback) customFontFeedback.innerHTML = `<span style="color: #4ade80;">Font "${name}" found in system</span>`;
                 } else {
-                    if (customFontFeedback) customFontFeedback.innerHTML = `<span style="color: #f87171;">Not found in system. Tip: Use "Font File (.ttf)" button below!</span>`;
+                    if (customFontFeedback) customFontFeedback.innerHTML = `<span style="color: #ff3333;">Not found in system. Tip: Use "Font File (.ttf)" button below!</span>`;
                 }
             } else {
                 if (customFontFeedback) customFontFeedback.innerHTML = '';
