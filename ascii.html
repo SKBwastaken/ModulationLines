@@ -1508,6 +1508,7 @@
                 <h1>ASCII ART CREATOR</h1>
                 <div class="header-credit">
                     <span>vibe coded by <a href="https://discord.com/users/289503943409664000" target="_blank" rel="noopener noreferrer">SKB</a></span>
+                    <span class="header-updated" id="headerUpdated" title="Click to view Changelog">(last update ...)</span>
                 </div>
             </div>
             <button class="btn-reset-all" id="btnResetAll" title="Reset all settings to default">
@@ -2202,9 +2203,9 @@
                                 <span>Changelog</span>
                             </div>
                             <div class="changelog-meta">
-                                <a href="https://github.com/SKBwastaken/ASCIICreator" target="_blank" rel="noopener noreferrer" class="changelog-build-badge" title="Open repository on GitHub">Build 2026.10.08</a>
+                                <a href="https://github.com/SKBwastaken/ASCIICreator" target="_blank" rel="noopener noreferrer" class="changelog-build-badge" title="Open repository on GitHub">Build 2026.10.18</a>
                                 <span>•</span>
-                                <span>October 8, 2026 • 16:15 UTC+2</span>
+                                <span>October 18, 2026</span>
                             </div>
                         </div>
                         <button class="changelog-close-btn" id="btnCloseChangelog" title="Close">
@@ -2213,11 +2214,36 @@
                     </div>
 
                     <div class="changelog-body">
+                        <!-- v1.7.0 (Merged Suite) -->
+                        <div class="changelog-version-block">
+                            <div class="changelog-version-tag">
+                                <span>Version 1.7.0</span>
+                                <span class="badge-latest">Latest Update</span>
+                            </div>
+                            <div class="changelog-list">
+                                <div class="changelog-item">
+                                    <span class="changelog-bullet"></span>
+                                    <div class="changelog-item-content">
+                                        <span class="changelog-item-title">Merged Tool Suite</span>
+                                        <span class="changelog-item-desc">ASCII Art Creator and Modulation Lines now ship as one multi-page build with a central hub and automatic routing between tools.</span>
+                                    </div>
+                                </div>
+                                <div class="changelog-item">
+                                    <span class="changelog-bullet"></span>
+                                    <div class="changelog-item-content">
+                                        <span class="changelog-item-title">Unified Terminal UI</span>
+                                        <span class="changelog-item-desc">Shared theme, tool switcher, sharp-corner design pass and collapsible category cards across both tools.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="changelog-divider"></div>
+
                         <!-- v1.6.3 (Patch) -->
                         <div class="changelog-version-block">
                             <div class="changelog-version-tag">
                                 <span>Version 1.6.3</span>
-                                <span class="badge-latest">Latest Update</span>
                             </div>
                             <div class="changelog-list">
                                 <div class="changelog-item">
@@ -5527,10 +5553,37 @@
             };
         }
 
+        // Dynamic "last update [x ago]" timestamp updater
+        function updateLastUpdatedLabel() {
+            const el = document.getElementById('headerUpdated');
+            if (!el) return;
+
+            let updateTime = new Date('2026-10-18T00:00:00+02:00').getTime();
+            if (document.lastModified) {
+                const d = new Date(document.lastModified).getTime();
+                if (!isNaN(d) && d > 1000) updateTime = d;
+            }
+
+            const diffSec = Math.max(0, Math.floor((Date.now() - updateTime) / 1000));
+            const diffMin = Math.floor(diffSec / 60);
+            const diffHours = Math.floor(diffMin / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            let str = 'just now';
+            if (diffDays > 1) str = `${diffDays} days ago`;
+            else if (diffDays === 1) str = `1 day ago`;
+            else if (diffHours > 1) str = `${diffHours} hours ago`;
+            else if (diffHours === 1) str = `1 hour ago`;
+            else if (diffMin > 1) str = `${diffMin} minutes ago`;
+            else if (diffMin === 1) str = `1 minute ago`;
+
+            el.textContent = `(last update ${str})`;
+        }
+
         // -------------------------------------------------------------
         // CHANGELOG / WHAT'S NEW MODAL LOGIC
         // -------------------------------------------------------------
-        const CURRENT_CHANGELOG_BUILD = '2026-10-08-v1.6.3';
+        const CURRENT_CHANGELOG_BUILD = '2026-10-18-v1.7.0';
         const changelogModalOverlay = document.getElementById('changelogModalOverlay');
         const btnCloseChangelog = document.getElementById('btnCloseChangelog');
         const btnConfirmChangelog = document.getElementById('btnConfirmChangelog');
@@ -5562,6 +5615,12 @@
             }, { passive: false });
         }
 
+        // Clicking on "(last update ...)" in the header reopens the changelog anytime
+        const headerUpdatedEl = document.getElementById('headerUpdated');
+        if (headerUpdatedEl) {
+            headerUpdatedEl.onclick = () => openChangelogModal();
+        }
+
         function checkAutoShowChangelog() {
             try {
                 const seenBuild = localStorage.getItem('ascii_last_seen_build');
@@ -5586,6 +5645,8 @@
         updateCheckerboardState();
         initSidebarPosition();
         initSidebarWidth();
+        updateLastUpdatedLabel();
+        setInterval(updateLastUpdatedLabel, 30000);
         checkAutoShowChangelog();
         document.title = "ASCII ART CREATOR";
     </script>
