@@ -28,7 +28,7 @@ by the browser.
 - `hub.html` — tool hub with previews
 - `shared.css` — shared design tokens + switcher/modal/hub styles
 - `collapse.js` — click a sidebar category name to collapse/expand it (state saved per tool)
-- `switcher.js` — compact top-left tool switcher with in-window unsaved-changes confirm
+- `switcher.js` — compact tool switcher (tool pages only) with in-window unsaved-changes confirm
 - `assets/` — OG/example images (`example.png`, `geo.jpg`, `embed.png`); hub previews go in `preview-ascii.png` / `preview-modulation.png`
 
 ## Style
