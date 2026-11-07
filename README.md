@@ -1,5 +1,7 @@
 # SKB // TOOLS
 
+**Disclaimer:** This entire tool/website is entirely vibe coded.
+
 Two browser tools, one repo. Both live on GitHub Pages:
 
 - **ASCII ART CREATOR** — converts images, GIFs and videos into colored ASCII art on canvas, with palettes, fonts, presets and export.
@@ -36,7 +38,3 @@ by the browser.
 Black background, 1px white/dark-gray borders, Consolas/Courier New monospace,
 pastel-orange primary accent (#ffb366) with yellow/red status accents, and
 ASCII-art range sliders (```----------o----```). No external font or CDN dependencies.
-
-## Credits
-
-vibe coded by [SKB](https://discord.com/users/289503943409664000)
